@@ -32,12 +32,24 @@ async function onFindWeatherOfCity(e) {
     e.preventDefault();
     const value = refs.weatherInput.value.trim();
     // console.log(value);
+    localStorage.setItem('city', value)
     if (value) {
         const response = await fetchWeather(value);
         createWeatherMarkup(response);
         refs.weatherInput.value = '';
     }
 };
+
+async function getFromLocalStorage() {
+    const cityName = localStorage.getItem('city');
+    if (cityName) {
+        const response = await fetchWeather(cityName);
+        createWeatherMarkup(response);
+        refs.weatherInput.value = '';
+    }
+}
+
+getFromLocalStorage();
 
 function createWeatherMarkup(data) {
     try {
@@ -65,3 +77,4 @@ function createWeatherMarkup(data) {
 function onSearchFail() {
     refs.weatherContainer.innerHTML = '';
 };
+
