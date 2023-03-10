@@ -2,12 +2,11 @@ import Notiflix from 'notiflix';
 import axios from 'axios';
 
 const refs = {
-    weatherBtn: document.querySelector('.weather-btn'),
-    weatherInput: document.querySelector('.weather-input'),
+    weatherForm: document.querySelector('.weather-wrapper__find'),
     weatherContainer: document.querySelector('.weather-container'),
 };
 
-refs.weatherBtn.addEventListener('click', onFindWeatherOfCity);
+refs.weatherForm.addEventListener('submit', onFindWeatherOfCity);
 
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 const API_KEY = 'bff3b02653de3236c205c9ed174b3c69';
@@ -20,7 +19,7 @@ async function fetchWeather(value) {
                 units: "metric",
                 q: `${value}`,
             }
-        }
+        };
         const response = await axios(BASE_URL, options);
         return response.data;
     } catch (error) {
@@ -30,14 +29,14 @@ async function fetchWeather(value) {
 
 async function onFindWeatherOfCity(e) {
     e.preventDefault();
-    const value = refs.weatherInput.value.trim();
-    // console.log(value);
+    // const value = refs.weatherInput.value.trim();
+    const value = refs.weatherForm.searchWeather.value.trim();
     localStorage.setItem('city', value)
     if (value) {
         const response = await fetchWeather(value);
         createWeatherMarkup(response);
-        refs.weatherInput.value = '';
-    }
+        refs.weatherForm.searchWeather.value = '';
+    };
 };
 
 async function getFromLocalStorage() {
@@ -45,7 +44,7 @@ async function getFromLocalStorage() {
     if (cityName) {
         const response = await fetchWeather(cityName);
         createWeatherMarkup(response);
-        refs.weatherInput.value = '';
+        refs.weatherForm.searchWeather.value = '';
     }
 }
 
@@ -65,7 +64,7 @@ function createWeatherMarkup(data) {
             <p class="weather-container__pressure">Pressure: ${data.main.pressure} mm Hg</p>
             <p class="weather-container__wind">Wind: ${data.wind.speed.toFixed(1)} m/s</p>
         </div>
-        `
+        `;
         refs.weatherContainer.innerHTML = markup;
         Notiflix.Notify.success(`${data.name} was found!`);
     } catch (error) {
@@ -77,4 +76,3 @@ function createWeatherMarkup(data) {
 function onSearchFail() {
     refs.weatherContainer.innerHTML = '';
 };
-
