@@ -2,11 +2,12 @@ import Notiflix from 'notiflix';
 import axios from 'axios';
 
 const refs = {
-    weatherForm: document.querySelector('.weather-form'),
+    weatherBtn: document.querySelector('.weather-btn'),
+    weatherInput: document.querySelector('.weather-input'),
     weatherContainer: document.querySelector('.weather-container'),
 };
 
-refs.weatherForm.addEventListener('submit', onFindWeatherOfCity);
+refs.weatherBtn.addEventListener('click', onFindWeatherOfCity);
 
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 const API_KEY = 'bff3b02653de3236c205c9ed174b3c69';
@@ -29,10 +30,12 @@ async function fetchWeather(value) {
 
 async function onFindWeatherOfCity(e) {
     e.preventDefault();
-    const value = e.target.searchWeather.value.trim();
+    const value = refs.weatherInput.value.trim();
+    // console.log(value);
     if (value) {
         const response = await fetchWeather(value);
-        return createWeatherMarkup(response);
+        createWeatherMarkup(response);
+        refs.weatherInput.value = '';
     }
 };
 
@@ -41,14 +44,14 @@ function createWeatherMarkup(data) {
         // console.log(data);
         const markup = `
         <div class="weather-container__data">
-            <p class="weather-container__country">${data.sys.country}</p>
-            <p class="weather-container__city">${data.name}</p>
             <div class="weather-container__icon">
+                <p class="weather-container__country">Country: ${data.sys.country}</p>
                 <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="${data.weather[0].description}" />
-        </div>
-            <div class="weather-container__temp">Temperature: ${data.main.temp.toFixed()}°C</div>
-            <div class="weather-container__pressure">Pressure: ${data.main.pressure} mm Hg</div>
-            <div class="weather-container__wind">Wind: ${data.wind.speed.toFixed(1)} m/s</div>
+            </div>
+            <p class="weather-container__city">City: ${data.name}</p>    
+            <p class="weather-container__temp">Temperature: ${data.main.temp.toFixed()}°C</p>
+            <p class="weather-container__pressure">Pressure: ${data.main.pressure} mm Hg</p>
+            <p class="weather-container__wind">Wind: ${data.wind.speed.toFixed(1)} m/s</p>
         </div>
         `
         refs.weatherContainer.innerHTML = markup;
